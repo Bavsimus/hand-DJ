@@ -84,7 +84,7 @@ while cap.isOpened():
 
                     # Ses seviyesini mavi çizginin uzunluğuna göre ayarla
                     cv2.putText(frame, f'Volume', (blue_mid_x, blue_mid_y - 20), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 0, 0), 2)
-                    volume = min(max((blue_length - 10) / 20, 0), 1)  # Mesafeyi 10 ile 30 arasında normalize et ve 0 ile 1 arasında sınırlayın
+                    volume = min(max(blue_length / 40, 0), 1)
                     pygame.mixer.music.set_volume(volume)
             except Exception as e:
                 print(f"Error: {e}")
