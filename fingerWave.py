@@ -89,6 +89,9 @@ def visualize_audio():
         if not ret:
             break
 
+        # Görüntüyü yatay olarak aynala
+        frame = cv2.flip(frame, 1)
+
         # BGR görüntüyü RGB'ye dönüştür
         rgb_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
 
