@@ -73,7 +73,7 @@ while cap.isOpened():
                     left_mid_y = mid_y
 
                 if 'right_mid_x' in locals() and 'left_mid_x' in locals():
-                    cv2.line(frame, (right_mid_x, right_mid_y), (left_mid_x, left_mid_y), (255, 0, 0), 2)  # Mavi çizgi
+                    cv2.line(frame, (right_mid_x, right_mid_y), (left_mid_x, left_mid_y), (0, 0, 0), 2)  # Mavi çizgi
                     # Mavi çizginin uzunluğunu hesapla
                     blue_length = math.sqrt((right_mid_x - left_mid_x) ** 2 + (right_mid_y - left_mid_y) ** 2)
                     blue_length = int(blue_length / 10)  # Değeri 10'a böl ve tam sayıya çevir
