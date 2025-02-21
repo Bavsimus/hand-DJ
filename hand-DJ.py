@@ -34,9 +34,14 @@ sound_data = wf.readframes(frames_per_buffer)
 blue = (255, 0, 0)
 green = (0, 255, 0)
 red = (0, 0, 255)
+white = (255, 255, 255)
 
 # OpenCV video capture
 cap = cv2.VideoCapture(0)
+
+# Set the width and height of the video capture
+cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1280)
+cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 720)
 
 # MediaPipe hands
 mp_hands = mp.solutions.hands
@@ -102,7 +107,7 @@ while cap.isOpened():
                 for landmark in [right_index_finger, right_thumb]:
                     x = int(landmark.x * frame.shape[1])
                     y = int(landmark.y * frame.shape[0])
-                    cv2.circle(frame, (x, y), 5, green, -1)
+                    cv2.circle(frame, (x, y), 10, white, 2)
 
                 # Draw line between right index finger and right thumb
                 right_index_finger_x = int(right_index_finger.x * frame.shape[1])
@@ -125,7 +130,7 @@ while cap.isOpened():
                 for landmark in [left_index_finger, left_thumb]:
                     x = int(landmark.x * frame.shape[1])
                     y = int(landmark.y * frame.shape[0])
-                    cv2.circle(frame, (x, y), 10, green, 2)
+                    cv2.circle(frame, (x, y), 10, white, 2)
 
                 # Draw line between left index finger and left thumb
                 left_index_finger_x = int(left_index_finger.x * frame.shape[1])
@@ -171,15 +176,15 @@ while cap.isOpened():
                 cv2.line(frame, (int(x1_rot), int(y1_rot)), (int(x2_rot), int(y2_rot)), blue, 1)
 
             # Draw the equator line
-            # draw_equator(frame, left_mid_x, left_mid_y, right_mid_x, right_mid_y)
+            #draw_equator(frame, left_mid_x, left_mid_y, right_mid_x, right_mid_y)
 
             # Calculate the midpoint of the equator line
             equator_mid_x = (left_mid_x + right_mid_x) // 2
             equator_mid_y = (left_mid_y + right_mid_y) // 2
 
             # Display the distance at the midpoint of the equator line
-            cv2.putText(frame, distance_text, (equator_mid_x - 50, equator_mid_y - 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2, cv2.LINE_AA)
-            cv2.putText(frame, distance_text_var, (equator_mid_x - 30, equator_mid_y - 20), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2, cv2.LINE_AA)
+            cv2.putText(frame, distance_text, (equator_mid_x - 50, equator_mid_y - 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 1, cv2.LINE_AA)
+            cv2.putText(frame, distance_text_var, (equator_mid_x - 30, equator_mid_y - 20), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 1, cv2.LINE_AA)
 
     # Display the frame
     cv2.imshow('Audio Visualizer', frame)
