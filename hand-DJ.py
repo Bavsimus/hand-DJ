@@ -12,7 +12,7 @@ import math
 p = pyaudio.PyAudio()
 
 # mp3 to wav
-mp3_filename = r'C:\Users\USER\Documents\GitHub\hand-DJ\SICKOMODE.wav'  # song path
+mp3_filename = r'/Users/talibyesildal/Downloads/limp-bizkit_boiler.mp3'  # song path
 wav_filename = 'temp.wav'
 audio_segment = AudioSegment.from_file(mp3_filename)
 audio_segment.export(wav_filename, format='wav')
