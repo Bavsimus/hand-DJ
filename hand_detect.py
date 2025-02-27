@@ -6,14 +6,7 @@ mp_hands = mp.solutions.hands
 hands = mp_hands.Hands()
 mp_drawing = mp.solutions.drawing_utils
 
-# VideoCapture ile kamerayı başlat
-cap = cv2.VideoCapture(0)
-
-while cap.isOpened():
-    ret, frame = cap.read()
-    if not ret:
-        break
-
+def detect_hand(frame):
     # BGR görüntüyü RGB'ye dönüştür
     rgb_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
 
@@ -41,13 +34,4 @@ while cap.isOpened():
             # Elin bağlantı noktalarını çiz
             mp_drawing.draw_landmarks(frame, hand_landmarks, mp_hands.HAND_CONNECTIONS)
 
-    # Görüntüyü göster
-    cv2.imshow("Hand Detection", frame)
-
-    # 'q' tuşuna basıldığında çık
-    if cv2.waitKey(1) & 0xFF == ord('q'):
-        break
-
-# Kaynakları serbest bırak
-cap.release()
-cv2.destroyAllWindows()
+    return frame
