@@ -55,12 +55,17 @@ def check_left_hand_gesture(frame, hand_landmarks, w, h):
 
     # Mesafe hesapla
     distance = math.dist(index_point, thumb_point)
+    pinch_detected = False
     if distance < 20:  # 20 piksel altında ise
         cv2.putText(frame, 'Pinch Detected', (50, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, RED, 2, cv2.LINE_AA)
+        pinch_detected = True
+    
+    return pinch_detected
 
 def handMenu(frame):
     rgb_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
     result = hands.process(rgb_frame)
+    pinch_detected = False
 
     if result.multi_hand_landmarks:
         for hand_landmarks, handedness in zip(result.multi_hand_landmarks, result.multi_handedness):
@@ -70,6 +75,6 @@ def handMenu(frame):
             if label == 'Right':
                 draw_right_hand_menu(frame, hand_landmarks, w, h)
             else:
-                check_left_hand_gesture(frame, hand_landmarks, w, h)
+                pinch_detected = check_left_hand_gesture(frame, hand_landmarks, w, h)
 
-    return frame
+    return frame, pinch_detected
