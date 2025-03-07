@@ -61,6 +61,10 @@ def play_audio(wf, stream):
         adjusted_data = adjusted_data.astype(np.int16).tobytes()
         stream.write(adjusted_data)
 
+# Function to calculate the distance between two points
+def calculate_distance(x1, y1, x2, y2):
+    return math.sqrt(((x2 - x1) ** 2 + (y2 - y1) ** 2 ) / 10)
+
 # Function to draw the equator line
 def draw_equator(frame, left_mid_x, left_mid_y, right_mid_x, right_mid_y):
     cv2.line(frame, (left_mid_x, left_mid_y), (right_mid_x, right_mid_y), (255, 255, 0), 2)
@@ -68,7 +72,6 @@ def draw_equator(frame, left_mid_x, left_mid_y, right_mid_x, right_mid_y):
 # Function to process the frame
 def process_frame(frame):
     global volume, sound_data
-
 
     # Convert the frame to RGB
     rgb_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
@@ -78,6 +81,7 @@ def process_frame(frame):
 
     # Initialize midpoints
     right_mid_x = right_mid_y = left_mid_x = left_mid_y = None
+    right_thumb_index_distance = left_thumb_index_distance = None  # Initialize the distance variables
 
     # Draw specific hand landmarks
     if results.multi_hand_landmarks:
@@ -106,6 +110,9 @@ def process_frame(frame):
                 right_mid_x = (right_index_finger_x + right_thumb_x) // 2
                 right_mid_y = (right_index_finger_y + right_thumb_y) // 2
 
+                # Calculate the distance between right thumb and index finger
+                right_thumb_index_distance = calculate_distance(right_index_finger_x, right_index_finger_y, right_thumb_x, right_thumb_y)
+
             elif hand_label == 'Left':
                 # Left hand landmarks (index finger and thumb)
                 left_index_finger = hand_landmarks.landmark[mp_hands.HandLandmark.INDEX_FINGER_TIP]
@@ -127,6 +134,16 @@ def process_frame(frame):
                 # Calculate and draw midpoint
                 left_mid_x = (left_index_finger_x + left_thumb_x) // 2
                 left_mid_y = (left_index_finger_y + left_thumb_y) // 2
+
+                # Calculate the distance between left thumb and index finger
+                left_thumb_index_distance = calculate_distance(left_index_finger_x, left_index_finger_y, left_thumb_x, left_thumb_y)
+
+    # Optionally, display the distances
+    if right_thumb_index_distance:
+        cv2.putText(frame, f"Right Thumb-Index Distance: {int(right_thumb_index_distance)}", (20, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2, cv2.LINE_AA)
+
+    if left_thumb_index_distance:
+        cv2.putText(frame, f"Left Thumb-Index Distance: {int(left_thumb_index_distance)}", (20, 100), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2, cv2.LINE_AA)
 
     # analyze the sound data
     if sound_data:

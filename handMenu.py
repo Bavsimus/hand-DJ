@@ -20,11 +20,29 @@ SONG_PATHS = {
     "lazy song": r"C:\Users\USER\Music\cropped\lazysong.wav"
 }
 
+def is_hand_open(hand_landmarks):
+    """Elin açık olup olmadığını belirler."""
+    fingers_open = 0
+    finger_tips = [
+        mp_hands.HandLandmark.INDEX_FINGER_TIP,
+        mp_hands.HandLandmark.MIDDLE_FINGER_TIP,
+        mp_hands.HandLandmark.RING_FINGER_TIP,
+        mp_hands.HandLandmark.PINKY_TIP
+    ]
+    for tip in finger_tips:
+        if hand_landmarks.landmark[tip].y < hand_landmarks.landmark[tip - 2].y:  # Parmak ucu alt eklemden yukarıdaysa açıktır
+            fingers_open += 1
+
+    return fingers_open >= 3  # En az 3 parmak açıksa eli açık kabul et
+
 def draw_right_hand_menu(frame, hand_landmarks, w, h):
-    """Sağ el için interaktif menüyü çizer ve seçili şarkıyı döndürür."""
+    """Sağ el açıksa interaktif menüyü çizer ve seçili şarkıyı döndürür."""
+    if not is_hand_open(hand_landmarks):  
+        return None  # Eğer el kapalıysa menüyü çizme
+
     middle_finger_base = hand_landmarks.landmark[mp_hands.HandLandmark.MIDDLE_FINGER_MCP]
     center = (int(middle_finger_base.x * w), int(middle_finger_base.y * h))
-    
+
     # Yarım daire çiz
     axes = (100, 100)
     cv2.ellipse(frame, center, axes, 0, 180, 360, GREEN, 2)
@@ -45,7 +63,7 @@ def draw_right_hand_menu(frame, hand_landmarks, w, h):
 
     # En yakın seçeneği bul
     closest_circle = min(circle_positions, key=lambda pos: math.dist(index_finger_tip_point, pos[:2]))
-    
+
     # Seçili olanı büyüt ve metni ekle
     cv2.circle(frame, (closest_circle[0], closest_circle[1]), 10, WHITE, -1)
     cv2.putText(frame, closest_circle[2], (closest_circle[0], closest_circle[1] - 10), cv2.FONT_HERSHEY_SIMPLEX, 1, WHITE, 2, cv2.LINE_AA)
