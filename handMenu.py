@@ -10,10 +10,18 @@ WHITE = (255, 255, 255)
 GREEN = (0, 255, 0)
 RED = (0, 0, 255)
 
+# Şarkı adları ve pathleri
 TEXTS = ["sickomode", "dans et", "boiler", "check my brain", "lazy song"]
+SONG_PATHS = {
+    "sickomode": r"C:\Users\USER\Music\cropped\sickomode.wav",
+    "dans et": r"C:\Users\USER\Music\cropped\danset.wav",
+    "boiler": r"C:\Users\USER\Music\cropped\boiler.wav",
+    "check my brain": r"C:\Users\USER\Music\cropped\checkmybrain.wav",
+    "lazy song": r"C:\Users\USER\Music\cropped\lazysong.wav"
+}
 
 def draw_right_hand_menu(frame, hand_landmarks, w, h):
-    """Sağ el için interaktif menüyü çizer."""
+    """Sağ el için interaktif menüyü çizer ve seçili şarkıyı döndürür."""
     middle_finger_base = hand_landmarks.landmark[mp_hands.HandLandmark.MIDDLE_FINGER_MCP]
     center = (int(middle_finger_base.x * w), int(middle_finger_base.y * h))
     
@@ -42,6 +50,8 @@ def draw_right_hand_menu(frame, hand_landmarks, w, h):
     cv2.circle(frame, (closest_circle[0], closest_circle[1]), 10, WHITE, -1)
     cv2.putText(frame, closest_circle[2], (closest_circle[0], closest_circle[1] - 10), cv2.FONT_HERSHEY_SIMPLEX, 1, WHITE, 2, cv2.LINE_AA)
 
+    return SONG_PATHS[closest_circle[2]]
+
 def check_left_hand_gesture(frame, hand_landmarks, w, h):
     """Sol elin işaret ve baş parmağı arasındaki mesafeyi kontrol eder."""
     index_finger_tip = hand_landmarks.landmark[mp_hands.HandLandmark.INDEX_FINGER_TIP]
@@ -66,6 +76,7 @@ def handMenu(frame):
     rgb_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
     result = hands.process(rgb_frame)
     pinch_detected = False
+    selected_song_path = None
 
     if result.multi_hand_landmarks:
         for hand_landmarks, handedness in zip(result.multi_hand_landmarks, result.multi_handedness):
@@ -73,8 +84,8 @@ def handMenu(frame):
             h, w, _ = frame.shape
 
             if label == 'Right':
-                draw_right_hand_menu(frame, hand_landmarks, w, h)
+                selected_song_path = draw_right_hand_menu(frame, hand_landmarks, w, h)
             else:
                 pinch_detected = check_left_hand_gesture(frame, hand_landmarks, w, h)
 
-    return frame, pinch_detected
+    return frame, pinch_detected, selected_song_path

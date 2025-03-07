@@ -48,17 +48,18 @@ stop_flag = threading.Event()
 volume = 1.0  # Default volume (1.0 is original volume)
 
 # Function to play audio in a separate thread
-def play_audio():
+def play_audio(wf, stream):
     global sound_data
     while not stop_flag.is_set():
         # Adjust volume
+        sound_data = wf.readframes(1024)
+        if len(sound_data) == 0:  # If end of file is reached, rewind
+            wf.rewind()
+            sound_data = wf.readframes(1024)
+        
         adjusted_data = np.frombuffer(sound_data, dtype=np.int16) * volume
         adjusted_data = adjusted_data.astype(np.int16).tobytes()
         stream.write(adjusted_data)
-        sound_data = wf.readframes(frames_per_buffer)
-        if len(sound_data) == 0:  # If end of file is reached, rewind
-            wf.rewind()
-            sound_data = wf.readframes(frames_per_buffer)
 
 # Function to draw the equator line
 def draw_equator(frame, left_mid_x, left_mid_y, right_mid_x, right_mid_y):
@@ -169,13 +170,27 @@ def process_frame(frame):
     return frame
 
 # Function to start audio playback
-def start_audio_playback():
-    audio_thread = threading.Thread(target=play_audio)
+def start_audio_playback(song_path):
+    # Convert MP3 to WAV
+    wav_filename = 'temp.wav'
+    audio_segment = AudioSegment.from_file(song_path)
+    audio_segment.export(wav_filename, format='wav')
+
+    # Open WAV file
+    wf = wave.open(wav_filename, 'rb')
+
+    # Pyaudio stream
+    stream = p.open(format=pyaudio.paInt16,
+                    channels=wf.getnchannels(),
+                    rate=wf.getframerate(),
+                    output=True)
+
+    audio_thread = threading.Thread(target=play_audio, args=(wf, stream))
     audio_thread.start()
-    return audio_thread
+    return audio_thread, wf, stream
 
 # Function to stop audio playback
-def stop_audio_playback(audio_thread):
+def stop_audio_playback(audio_thread, wf, stream):
     stop_flag.set()
     audio_thread.join()
     stream.stop_stream()
