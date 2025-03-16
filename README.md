@@ -18,7 +18,7 @@ pip install opencv-python mediapipe numpy pyaudio wave pydub
 Ardından, MediaPipe ve diğer bağımlılıkları içeren kodu çalıştırmak için projenizi klonlayın:
 
 ```bash
-git clone https://github.com/kullaniciadi/hand-dj.git
+git clone https://github.com/Bavsimus/hand-dj.git
 cd hand-dj
 ```
 
