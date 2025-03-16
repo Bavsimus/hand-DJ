@@ -14,7 +14,7 @@ HandDJ, el hareketleriyle müzik çalmayı ve kontrol etmeyi sağlayan bir Pytho
 ```bash
 pip install opencv-python mediapipe numpy pyaudio wave pydub
 ```
-
+Eğer yoksa ffmpeg kurmanız gerekiyor, bunu araştırarak bulabilirsiniz.
 Ardından, MediaPipe ve diğer bağımlılıkları içeren kodu çalıştırmak için projenizi klonlayın:
 
 ```bash
