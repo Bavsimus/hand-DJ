@@ -1,65 +1,73 @@
+# HandDJ
 
-# Hand-DJ
+HandDJ, el hareketleriyle müzik çalmayı ve kontrol etmeyi sağlayan bir Python uygulamasıdır. OpenCV ve MediaPipe kullanarak el hareketlerini algılar ve belirlenen hareketlerle şarkıları oynatır veya durdurur.
 
-Hand DJ, el hareketlerini kullanarak sesi kontrol eden bir ses görselleştirme uygulamasıdır. OpenCV, MediaPipe ve PyAudio gibi kütüphaneler kullanılarak geliştirilmiştir.
+## 🚀 Özellikler
+- **El hareketleri ile kontrol:** İşaret ve başparmak ile yapılan pinch hareketiyle müziği başlat veya durdur.
+- **Gerçek zamanlı kamera işleme:** OpenCV kullanarak anlık görüntü işleme.
+- **Ses kontrolü:** PyAudio ile müzik çalma ve durdurma.
 
+## 📦 Kurulum
 
-## Özellikler
+Öncelikle, bağımlılıkları yüklemek için aşağıdaki komutu çalıştırın:
 
-- Ellerin Takibi: MediaPipe kullanarak sağ ve sol elin başparmak ve işaret parmak uçlarını algılar.
-- Ses Kontrolü: İki el arasındaki mesafeye göre sesi kontrol eder (uzaklık arttıkça ses artar, azaldıkça ses azalır).
-- Gerçek Zamanlı Ses Görselleştirme: Ses dalgalarını tespit edilen el konumlarına göre ekrana yansıtır.
-- MP3 Desteği: MP3 formatındaki ses dosyalarını WAV formatına çevirerek oynatır.
-- Gerçek Zamanlı Video İşleme: OpenCV ile kameradan gelen görüntüler işlenir.
-  
-## Gereksinimler
-
-Bu projeyi çalıştırmadan önce aşağıdaki bağımlılıkları yüklemeniz gerekmektedir:
-
+```bash
+pip install opencv-python mediapipe numpy pyaudio wave pydub
 ```
-pip install opencv-python numpy pyaudio wave pydub mediapipe
+
+Ardından, MediaPipe ve diğer bağımlılıkları içeren kodu çalıştırmak için projenizi klonlayın:
+
+```bash
+git clone https://github.com/kullaniciadi/hand-dj.git
+cd hand-dj
 ```
-  
-## Kullanım/Örnekler
 
-+ Ses Dosyanızı Belirleyin: ```mp3_filename``` değişkenine MP3 formatındaki ses dosyanızın yolunu yazın.
-+ Kodu Çalıştırın:
+## 🔧 Kullanım
+
+Python scriptini çalıştırmak için:
+
+```bash
+python main.py
 ```
-python hand-DJ.py
+
+Kamera açıldıktan sonra:
+- **Parmaklarınızı kıstığınızda** müzik çalmaya başlar.
+- **Tekrar kıstığınızda** müzik durur.
+- **'Q' tuşuna basarak** uygulamayı kapatabilirsiniz.
+
+## 📂 Dosya Yapısı
+
+Kendi şarkılarınızın yolunu ve isimlerini yazmayı unutmayın.
+```bash
+TEXTS = ["sickomode", "dans et", "boiler", "check my brain", "lazy song"]
+SONG_PATHS = {
+    "sickomode": r"C:\\Users\\USER\\Music\\cropped\\sickomode.wav",
+    "dans et": r"C:\\Users\\USER\\Music\\cropped\\danset.wav",
+    "boiler": r"C:\\Users\\USER\\Music\\cropped\\boiler.wav",
+    "check my brain": r"C:\\Users\\USER\\Music\\cropped\\checkmybrain.wav",
+    "lazy song": r"C:\\Users\\USER\\Music\\cropped\\lazysong.wav"
+}
 ```
-## El Hareketleriyle Kontrol:
 
-- İki el arasındaki mesafeyi artırarak sesi yükseltin.
+Önemli scriptler:
+```
+hand-gesture-dj/
+│── main.py           # Ana betik, kamerayı açar ve işleme başlar.
+│── handMenu.py       # Menü için el hareketlerini algılar.
+│── handDjNoCam.py    # DJ kontrolü için el hareketlerini işler.
+│── ...    # Diğer.
+```
 
-- Mesafeyi azaltarak sesi kısın.
+## 🤖 Kullanılan Teknolojiler
+- **Python**
+- **OpenCV** - Gerçek zamanlı görüntü işleme.
+- **MediaPipe** - El hareketlerini algılama.
+- **PyAudio & pydub** - Ses işleme ve müzik çalma.
 
-- Çizilen ses dalgalarını ve ellerinizin hareketlerini ekranda gözlemleyin.
+## 📜 Lisans
+Bu proje MIT Lisansı ile sunulmaktadır. Daha fazla bilgi için [LICENSE](LICENSE) dosyasını inceleyebilirsiniz.
 
-- ```q``` tuşuna basarak uygulamadan çıkabilirsiniz.
+---
 
-  
-## Dosya Açıklamaları
+💡 **Geri bildirim ve katkılarınızı bekliyoruz!** Eğer projeyi beğendiyseniz ⭐ bırakmayı unutmayın! 😊
 
-- ```hand-DJ.py```: Uygulamanın ana kod dosyası.
-
-- ```*.py```: Uygulamanın geliştirilirken hatalar sonucu ortaya çıkan veya amaç olmasa bile kullanılabilir versiyonları.
-
-- ```temp.wav```: MP3 dosyasının geçici olarak çevrildiği WAV dosyası.
-
-## Çalışma Mantığı
-- OpenCV kullanarak kameradan gelen görüntüyü işler.
-
-- MediaPipe ile el hareketleri algılanır ve başparmak ile işaret parmak arasındaki mesafe hesaplanır.
-
-- PyAudio ile ses dosyası oynatılır ve ses seviyesi el hareketlerine göre ayarlanır.
-
-- Gerçek zamanlı olarak ses dalgaları ekrana çizilir.
-## Lisans
-
-Bu proje [MIT](https://choosealicense.com/licenses/mit/) Lisansı altında dağıtılmaktadır.
-
-Copyright © 2025
-
-![Logo](https://github.com/Bavsimus/Bavsimus/blob/main/logo.png?raw=true)
-
-    

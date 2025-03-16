@@ -10,7 +10,8 @@ import math
 
 # Pyaudio settings
 p = pyaudio.PyAudio()
-
+RED = (0, 0, 255)
+pinch_detectedDJ = False
 # mp3 to wav
 mp3_filename = r'C:\Users\USER\Music\cropped\sickomode.wav'  # song path
 wav_filename = 'temp.wav'
@@ -69,6 +70,23 @@ def calculate_distance(x1, y1, x2, y2):
 def draw_equator(frame, left_mid_x, left_mid_y, right_mid_x, right_mid_y):
     cv2.line(frame, (left_mid_x, left_mid_y), (right_mid_x, right_mid_y), (255, 255, 0), 2)
 
+def check_left_pinch(frame, hand_landmarks, w, h):
+    """Sol elin işaret ve baş parmağı arasındaki mesafeyi kontrol eder."""
+    global pinch_detectedDJ  # Burada farklı isim kullanıyoruz
+
+    index_finger_tip = hand_landmarks.landmark[mp.solutions.hands.HandLandmark.INDEX_FINGER_TIP]
+    thumb_tip = hand_landmarks.landmark[mp.solutions.hands.HandLandmark.THUMB_TIP]
+
+    index_point = (int(index_finger_tip.x * w), int(index_finger_tip.y * h))
+    thumb_point = (int(thumb_tip.x * w), int(thumb_tip.y * h))
+
+    distance = math.dist(index_point, thumb_point)
+    
+    pinch_detectedDJ = distance < 20  # Eğer mesafe küçükse True yap
+
+    return pinch_detectedDJ
+
+
 # Function to process the frame
 def process_frame(frame):
     global volume, sound_data
@@ -110,8 +128,7 @@ def process_frame(frame):
                 right_mid_x = (right_index_finger_x + right_thumb_x) // 2
                 right_mid_y = (right_index_finger_y + right_thumb_y) // 2
 
-                # Calculate the distance between right thumb and index finger
-                right_thumb_index_distance = calculate_distance(right_index_finger_x, right_index_finger_y, right_thumb_x, right_thumb_y)
+                check_left_pinch(frame, hand_landmarks, frame.shape[1], frame.shape[0])
 
             elif hand_label == 'Left':
                 # Left hand landmarks (index finger and thumb)
@@ -138,13 +155,7 @@ def process_frame(frame):
                 # Calculate the distance between left thumb and index finger
                 left_thumb_index_distance = calculate_distance(left_index_finger_x, left_index_finger_y, left_thumb_x, left_thumb_y)
 
-    # Optionally, display the distances
-    if right_thumb_index_distance:
-        cv2.putText(frame, f"Right Thumb-Index Distance: {int(right_thumb_index_distance)}", (20, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2, cv2.LINE_AA)
-
-    if left_thumb_index_distance:
-        cv2.putText(frame, f"Left Thumb-Index Distance: {int(left_thumb_index_distance)}", (20, 100), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2, cv2.LINE_AA)
-
+   
     # analyze the sound data
     if sound_data:
         audio_data = np.array(struct.unpack(str(2 * frames_per_buffer) + 'h', sound_data))
@@ -189,6 +200,8 @@ def process_frame(frame):
 # Function to start audio playback
 def start_audio_playback(song_path):
     # Convert MP3 to WAV
+    stop_flag.clear()  # stop_audio_playback çağırıldıktan sonra tekrar çalıştırılabilir
+
     wav_filename = 'temp.wav'
     audio_segment = AudioSegment.from_file(song_path)
     audio_segment.export(wav_filename, format='wav')
@@ -201,7 +214,6 @@ def start_audio_playback(song_path):
                     channels=wf.getnchannels(),
                     rate=wf.getframerate(),
                     output=True)
-
     audio_thread = threading.Thread(target=play_audio, args=(wf, stream))
     audio_thread.start()
     return audio_thread, wf, stream
@@ -213,4 +225,5 @@ def stop_audio_playback(audio_thread, wf, stream):
     stream.stop_stream()
     stream.close()
     wf.close()
-    p.terminate()
+    audio_thread = None
+    #p.terminate()
