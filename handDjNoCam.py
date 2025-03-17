@@ -115,7 +115,7 @@ def process_frame(frame):
                 for landmark in [right_index_finger, right_thumb]:
                     x = int(landmark.x * frame.shape[1])
                     y = int(landmark.y * frame.shape[0])
-                    cv2.circle(frame, (x, y), 10, white, 2)
+                    cv2.circle(frame, (x, y), 10, red, 2)
 
                 # Draw line between right index finger and right thumb
                 right_index_finger_x = int(right_index_finger.x * frame.shape[1])

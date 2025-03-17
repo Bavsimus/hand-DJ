@@ -23,11 +23,8 @@ def open_camera_and_run_script(song_path):
             print("Error: Could not read frame.")
             break
 
-        frame
+        frame = cv2.flip(frame, 1)
         key = cv2.waitKey(1) & 0xFF
-
-        # DEBUG: Pinch değerlerini yazdır
-        print(f"Pinch DJ: {handDjNoCam.pinch_detectedDJ}")
 
         # Eğer handDjNoCam içindeki pinch_detectedDJ True olursa geçiş yap
         if handDjNoCam.pinch_detectedDJ:
